@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from "vue-router";
 import Index from './../view/index/index';
 import PublishView from './../view/publish/publish';
+import DetailView from './../view/detail/detail';
+import IndexMoreView from "../view/index/IndexMoreView";
 
 Vue.use(VueRouter);
 
@@ -21,6 +23,14 @@ const routes = [
         path: '/publish',
         name: "publish",
         component: PublishView
+    }, {
+        path: '/index/detail/:id',
+        name: "detail",
+        component: DetailView
+    }, {
+        path: '/index/more/:label',
+        name: "index-more",
+        component: IndexMoreView
     }
 ]
 

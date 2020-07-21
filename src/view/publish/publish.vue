@@ -24,6 +24,7 @@
                 </el-col>
             </el-row>
             <el-row :gutter="15" style=" margin-top: 10px; margin-bottom: 20px;">
+                <div v-if="loading">Loading...</div>
                 <ckeditor style="background-color: #ffffff; min-height: 620px; border: 1px solid #ccc;" :editor="editor"
                           @ready="onReady" v-model="contentData"
                           :config="editorConfig"></ckeditor>
@@ -36,7 +37,7 @@
 <script>
     import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/zh-cn'
     import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-    import FileUtil from "../../utils/FileUtil";
+    import axios from 'axios';
 
     export default {
         name: "publish",
@@ -52,19 +53,9 @@
             }
         },
         data() {
-            let categories = [
-                {
-                    label: '理论思想',
-                    value: 'category1'
-                }, {
-                    label: '党章',
-                    value: 'category2'
-                }, {
-                    label: '准则',
-                    value: 'category3'
-                }
-            ];
+            let categories = this.GLOBAL.CATEGORIES;
             return {
+                loading: false,
                 articleTitle: '',
                 articleCategories: categories,
                 articleCategory: categories[0].value,
@@ -110,9 +101,38 @@
                     }
                 };
             },
+            validate() {
+                if(!this.contentData || !this.articleTitle) {
+                    return false;
+                }  else {
+                    return true;
+                }
+            },
             publishArticle() {
-               var content = `<html><head><meta charset="utf-8" /></head><body>${this.contentData}</body></html>`;
-               FileUtil.doSave(content, "text/latex", "hello.html")
+                if(this.validate()) {
+                    var content = this.contentData;
+                    axios
+                      .post('/cms/publish', {
+                            title: this.articleTitle,
+                            category: this.articleCategory,
+                            content: content,
+                            id: new Date().getTime() + ''
+                      })
+                      .then(() => {
+                         this.$router.push('/')
+                      })
+                      .catch(error => {
+                        console.error(error)
+                      })
+                      .finally(() => this.loading = false)
+                } else {
+                    this.$notify({
+                      title: '警告',
+                      message: '文章标题和文章内容不能为空',
+                      type: 'warning'
+                    });
+                }
+
             }
 
 
