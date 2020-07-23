@@ -9,7 +9,7 @@
                             <span>新闻中心</span>
                         </div>
                         <ul class="ul-menu">
-                           <li v-for="item in categories" :key="item.value" v-bind:class="{ active: item.label == category }">
+                           <li v-for="item in categories" :key="item.value" v-bind:class="{ active: item.label == category }" @click="changeCategory(item)">
                                {{item.label}}
                            </li>
                         </ul>
@@ -54,6 +54,7 @@
 
 <script>
     import axios from 'axios';
+    const DEFAULT_PAGE_SIZE = 20;
     export default {
         name: "IndexMoreView",
         data() {
@@ -62,7 +63,7 @@
                 category: this.$route.params.label,
                 articles: [],
                 pageNo: 1,
-                pageSize: 20,
+                pageSize: DEFAULT_PAGE_SIZE,
                 total: 0
             }
         },
@@ -94,7 +95,13 @@
                         console.log(this.articles);
                         this.total = resp.data.total;
                     })
-              }
+              },
+            changeCategory(item) {
+                this.category = item.label;
+                this.pageNo = 1;
+                this.pageSize = DEFAULT_PAGE_SIZE;
+                this.getPage();
+            }
 
 
         },
@@ -154,7 +161,8 @@
         font-weight: bold;
     }
     .ul-menu > li:hover {
-        color: rgb(218 96 93)
+        color: rgb(218 96 93);
+        cursor: pointer;
     }
     .link-font {
         text-decoration: none;
