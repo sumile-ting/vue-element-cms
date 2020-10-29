@@ -5,7 +5,7 @@ vue文章发布系统
 
 文章发布使用VUE + CKEditor5
 
-后台使用nodejs + mongoDB，参加项目vue-cms-serve
+后台使用nodejs + mongoDB，后台项目vue-cms-serve
 
 
 
